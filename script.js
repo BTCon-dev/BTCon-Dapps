@@ -26,11 +26,8 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         // --- TonConnect UI Initialization ---
-        // IMPORTANT: Replace 'https://your-dapp.com/tonconnect-manifest.json' with your actual public manifest URL.
-        // For local testing, you can serve tonconnect-manifest.json from the root and use './tonconnect-manifest.json'
-        // or use a publicly available raw gist/file URL if you upload it.
         const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-            manifestUrl: './tonconnect-manifest.json', // Placeholder, replace with your actual public URL
+            manifestUrl: 'https://btcon-dev.github.io/BTCon-Dapps/tonconnect-manifest.json',
             buttonRootId: 'ton-connect-button'
         });
 
