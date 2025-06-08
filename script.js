@@ -1,16 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
         const themeToggleBtn = document.getElementById('theme-toggle');
-        const connectWalletBtn = document.getElementById('connect-wallet-btn');
         const swapBtn = document.getElementById('swap-btn');
         const btcoAmountInput = document.getElementById('btco-amount');
         const tonAmountInput = document.getElementById('ton-amount');
         const walletStatusMsg = document.getElementById('wallet-status');
 
         let isDarkMode = localStorage.getItem('darkMode') === 'true';
-        let isWalletConnected = false;
-        let connectedWalletAddress = null;
-        let connectedWalletName = null;
-
         const EXAMPLE_RATE_BTCO_TO_TON = 0.1; // 1 BTCO = 0.1 TON
 
         // --- Theme Toggle ---
@@ -30,39 +25,26 @@ document.addEventListener('DOMContentLoaded', () => {
             applyTheme();
         });
 
-        // --- Wallet Connection (Mock) ---
-        connectWalletBtn.addEventListener('click', async () => {
-            if (isWalletConnected) {
-                // Disconnect logic (mock)
-                isWalletConnected = false;
-                connectedWalletAddress = null;
-                connectedWalletName = null;
-                connectWalletBtn.textContent = 'Connect Wallet';
-                connectWalletBtn.title = '';
-                walletStatusMsg.textContent = 'Wallet disconnected.';
-                console.log('Wallet disconnected (mock)');
-            } else {
-                // Simulate wallet selection and connection
-                walletStatusMsg.textContent = 'Connecting... (mock)';
-                
-                // Mocking successful connection after a delay
-                setTimeout(() => {
-                    const mockWallets = [
-                        { name: 'Telegram Wallet', address: 'EQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAM9c' },
-                        { name: 'Tonkeeper', address: 'UQBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBMFp' }
-                    ];
-                    const selectedMockWallet = mockWallets[Math.floor(Math.random() * mockWallets.length)];
+        // --- TonConnect UI Initialization ---
+        // IMPORTANT: Replace 'https://your-dapp.com/tonconnect-manifest.json' with your actual public manifest URL.
+        // For local testing, you can serve tonconnect-manifest.json from the root and use './tonconnect-manifest.json'
+        // or use a publicly available raw gist/file URL if you upload it.
+        const tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+            manifestUrl: './tonconnect-manifest.json', // Placeholder, replace with your actual public URL
+            buttonRootId: 'ton-connect-button'
+        });
 
-                    isWalletConnected = true;
-                    connectedWalletAddress = selectedMockWallet.address;
-                    connectedWalletName = selectedMockWallet.name;
-                    
-                    const shortAddress = `${connectedWalletAddress.substring(0,6)}...${connectedWalletAddress.substring(connectedWalletAddress.length-4)}`;
-                    connectWalletBtn.textContent = `Connected: ${shortAddress}`;
-                    connectWalletBtn.title = `Connected with ${connectedWalletName}: ${connectedWalletAddress}`;
-                    walletStatusMsg.textContent = `Connected with ${connectedWalletName} (mock).`;
-                    console.log(`Wallet connected (mock): ${connectedWalletName} - ${connectedWalletAddress}`);
-                }, 1500);
+        tonConnectUI.onStatusChange(wallet => {
+            if (wallet) {
+                const shortAddress = `${wallet.account.address.substring(0, 6)}...${wallet.account.address.substring(wallet.account.address.length - 4)}`;
+                walletStatusMsg.textContent = `Connected: ${wallet.device.appName} (${shortAddress})`;
+                console.log("Connected to:", wallet.device.appName);
+                console.log("Address:", wallet.account.address);
+                console.log("Chain:", wallet.account.chain);
+                console.log("Public Key:", wallet.account.publicKey);
+            } else {
+                walletStatusMsg.textContent = 'Wallet disconnected.';
+                console.log("Disconnected");
             }
             updateSwapButtonState();
         });
@@ -72,18 +54,17 @@ document.addEventListener('DOMContentLoaded', () => {
             const btcoAmount = parseFloat(btcoAmountInput.value);
             if (!isNaN(btcoAmount) && btcoAmount >= 0) {
                 const tonAmount = btcoAmount * EXAMPLE_RATE_BTCO_TO_TON;
-                // Format TON amount: show more precision for small values, less for large
                 let formattedTonAmount;
                 if (tonAmount === 0) {
                     formattedTonAmount = '0.0';
                 } else if (tonAmount < 0.0001) {
                     formattedTonAmount = tonAmount.toExponential(2);
                 } else if (tonAmount < 1) {
-                    formattedTonAmount = tonAmount.toFixed(6); // More precision for smaller amounts
+                    formattedTonAmount = tonAmount.toFixed(6);
                 } else {
-                    formattedTonAmount = tonAmount.toFixed(4); // Standard precision
+                    formattedTonAmount = tonAmount.toFixed(4);
                 }
-                tonAmountInput.value = formattedTonAmount.replace(/\.?0+$/, ""); // Remove trailing zeros after decimal
+                tonAmountInput.value = formattedTonAmount.replace(/\.?0+$/, "");
             } else {
                 tonAmountInput.value = '0.0';
             }
@@ -92,7 +73,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         function updateSwapButtonState() {
             const btcoAmount = parseFloat(btcoAmountInput.value);
-            if (!isWalletConnected) {
+            const wallet = tonConnectUI.wallet;
+
+            if (!wallet) {
                 swapBtn.disabled = true;
                 swapBtn.textContent = 'Connect Wallet to Swap';
             } else if (isNaN(btcoAmount) || btcoAmount <= 0) {
@@ -104,8 +87,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        swapBtn.addEventListener('click', () => {
-            if (!isWalletConnected) {
+        swapBtn.addEventListener('click', async () => {
+            const wallet = tonConnectUI.wallet;
+            if (!wallet) {
                 walletStatusMsg.textContent = 'Please connect your wallet first.';
                 console.warn('Swap attempt failed: Wallet not connected.');
                 return;
@@ -118,25 +102,38 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            const tonAmount = parseFloat(tonAmountInput.value.replace(/,/g, '')); // Ensure no commas if locale uses them
-
-            walletStatusMsg.textContent = `Swapping ${btcoAmount} BTCO for ~${tonAmountInput.value} TON... (mock)`;
-            console.log(`Attempting to swap ${btcoAmount} BTCO for ${tonAmountInput.value} TON with wallet ${connectedWalletAddress} (${connectedWalletName})`);
-            swapBtn.disabled = true; // Disable during mock transaction
+            walletStatusMsg.textContent = `Preparing to swap ${btcoAmount} BTCO... (mock)`;
+            console.log(`Attempting to swap ${btcoAmount} BTCO for ${tonAmountInput.value} TON`);
+            console.log(`Using wallet: ${wallet.device.appName}, Address: ${wallet.account.address}`);
             
-            setTimeout(() => {
-                const success = Math.random() > 0.2; // 80% chance of success for demo
-                if (success) {
-                    walletStatusMsg.textContent = `Successfully swapped ${btcoAmount} BTCO! (mock)`;
-                    console.log('Swap successful (mock).');
-                    btcoAmountInput.value = '';
-                    tonAmountInput.value = '';
-                } else {
-                    walletStatusMsg.textContent = 'Swap failed. Please try again. (mock)';
-                    console.error('Swap failed (mock).');
-                }
-                updateSwapButtonState(); // Re-enable or set to 'Enter Amount'
-            }, 2500);
+            swapBtn.disabled = true;
+            swapBtn.textContent = 'Processing...';
+
+            // This is where you would build and send a transaction
+            // For demo purposes, we'll simulate it:
+            try {
+                // Example: const transaction = { validUntil: ..., messages: [...] };
+                // await tonConnectUI.sendTransaction(transaction);
+                // For now, just a timeout to simulate.
+                setTimeout(() => {
+                    const success = Math.random() > 0.2; // 80% chance of success for demo
+                    if (success) {
+                        walletStatusMsg.textContent = `Successfully swapped ${btcoAmount} BTCO! (mock)`;
+                        console.log('Swap successful (mock).');
+                        btcoAmountInput.value = '';
+                        tonAmountInput.value = '';
+                    } else {
+                        walletStatusMsg.textContent = 'Swap failed. Please try again. (mock)';
+                        console.error('Swap failed (mock).');
+                    }
+                    updateSwapButtonState(); // Re-enable or set to 'Enter Amount'
+                }, 2500);
+
+            } catch (error) {
+                walletStatusMsg.textContent = 'Swap transaction error. (mock)';
+                console.error('Swap transaction error:', error);
+                updateSwapButtonState();
+            }
         });
 
         // --- Initializations ---
