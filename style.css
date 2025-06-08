@@ -75,35 +75,38 @@
         color: var(--primary-color);
     }
 
-    .header-actions button {
+    .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px; /* Added gap for spacing between theme toggle and connect button */
+    }
+
+    /* Styles for the old #connect-wallet-btn are removed */
+    /* The #ton-connect-button div will be styled by the TonConnect UI library */
+
+    #theme-toggle {
         background-color: var(--card-background-light);
         color: var(--text-color-light);
         border: 1px solid var(--border-color-light);
         padding: 8px 12px;
         border-radius: var(--border-radius);
         cursor: pointer;
-        font-size: 0.9em;
-        margin-left: 10px;
+        font-size: 1.2em; /* Increased size slightly for better visual balance */
         transition: background-color 0.2s, box-shadow 0.2s, border-color 0.2s;
+        line-height: 1; /* Ensure icon is centered */
     }
-    body.dark-mode .header-actions button {
+    body.dark-mode #theme-toggle {
         background-color: var(--card-background-dark);
         color: var(--text-color-dark);
         border: 1px solid var(--border-color-dark);
     }
 
-    .header-actions button:hover {
+    #theme-toggle:hover {
         border-color: var(--primary-color);
         box-shadow: 0 0 0 2px var(--primary-color-translucent, rgba(0,122,255,0.2));
     }
-    body.dark-mode .header-actions button:hover {
+    body.dark-mode #theme-toggle:hover {
         border-color: var(--primary-color);
-    }
-
-
-    #theme-toggle {
-        font-size: 1.2em;
-        padding: 6px 10px;
     }
 
     .swap-card {
@@ -312,6 +315,15 @@
         body {
             padding: 10px;
         }
+        header {
+            flex-wrap: wrap; /* Allow header items to wrap on small screens */
+            gap: 10px;
+        }
+        .logo-title {
+            flex-basis: 100%; /* Make logo/title take full width if wrapping */
+            justify-content: center; /* Center logo/title if it wraps */
+            margin-bottom: 10px; /* Add space if it wraps */
+        }
         header h1 {
             font-size: 1.5em;
         }
@@ -320,15 +332,16 @@
             height: 30px;
             margin-right: 10px;
         }
+        .header-actions {
+            flex-basis: 100%; /* Make actions take full width */
+            justify-content: center; /* Center actions */
+        }
         .swap-card {
             padding: 20px;
         }
-        .header-actions button {
-            padding: 6px 10px;
-            font-size: 0.8em;
-        }
         #theme-toggle {
-            font-size: 1em;
+            font-size: 1.1em; /* Adjusted for consistency */
+            padding: 7px 11px;
         }
         .input-group input {
             font-size: 1em;
