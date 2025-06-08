@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>BTCon Swap</title>
+        <link rel="stylesheet" href="style.css">
+        <link rel="icon" href="https://azure-tired-puma-835.mypinata.cloud/ipfs/bafkreidv2l2hehhlkjaev7tj36gmhysrbympyrwsco3snp4hsvqvuvkvzu" type="image/png">
+    </head>
+    <body>
+        <div class="container">
+            <header>
+                <div class="logo-title">
+                    <img src="https://azure-tired-puma-835.mypinata.cloud/ipfs/bafkreidv2l2hehhlkjaev7tj36gmhysrbympyrwsco3snp4hsvqvuvkvzu" alt="BTCon Logo" class="token-logo">
+                    <h1>BTCon Swap</h1>
+                </div>
+                <div class="header-actions">
+                    <button id="theme-toggle">☀️</button>
+                    <button id="connect-wallet-btn">Connect Wallet</button>
+                </div>
+            </header>
+
+            <main>
+                <div class="swap-card">
+                    <h2>Swap BTCO</h2>
+                    <div class="token-info">
+                        <p><strong>Token:</strong> BTCon (BTCO)</p>
+                        <p><strong>Contract:</strong> <a href="https://tonscan.org/address/EQBhEt-CohJ_mSX-_KBlXDScCevpM_7CT3ALizvPL0o0iqIC" target="_blank" rel="noopener noreferrer" class="contract-link" title="EQBhEt-CohJ_mSX-_KBlXDScCevpM_7CT3ALizvPL0o0iqIC">EQBhEt...iqIC</a></p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="btco-amount">You send</label>
+                        <div class="input-group">
+                            <input type="number" id="btco-amount" placeholder="0.0" step="any" min="0">
+                            <span class="token-symbol">BTCO</span>
+                        </div>
+                    </div>
+
+                    <div class="arrow-down">↓</div>
+
+                    <div class="form-group">
+                        <label for="ton-amount">You receive (approx.)</label>
+                        <div class="input-group">
+                            <input type="text" id="ton-amount" placeholder="0.0" readonly>
+                            <span class="token-symbol">TON</span>
+                        </div>
+                    </div>
+                    <p class="rate-info">1 BTCO ≈ 0.1 TON (example rate)</p>
+
+                    <button id="swap-btn" class="btn-primary" disabled>Connect Wallet to Swap</button>
+                    <p id="wallet-status" class="wallet-status-message"></p>
+                </div>
+            </main>
+
+            <footer>
+                <p>Connect with BTCon:</p>
+                <div class="social-links">
+                    <a href="https://instagram.com/BTConToken" target="_blank">Instagram</a>
+                    <a href="https://x.com/BTConToken" target="_blank">X (Twitter)</a>
+                    <a href="https://btcon.io" target="_blank">Website</a>
+                    <a href="https://t.me/BTConBot" target="_blank">Telegram Bot</a>
+                </div>
+                <p class="disclaimer">
+                    BTCon is a utility token on the TON blockchain that tracks the approximate value of Bitcoin (BTC) without being backed or bridged. It is designed for simulations, Web3 experiments, and educational tools where a BTC-like value reference is useful. BTCon is not a wrapped asset, nor does it represent real BTC.
+                </p>
+            </footer>
+        </div>
+        <script src="script.js"></script>
+    </body>
+    </html>
