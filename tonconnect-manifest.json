@@ -1,7 +1,7 @@
 {
-  "url": "https://btcon-dev.github.io/BTCon-Dapps/",
-  "name": "BTCon Swap",
-  "iconUrl": "https://azure-tired-puma-835.mypinata.cloud/ipfs/bafkreidv2l2hehhlkjaev7tj36gmhysrbympyrwsco3snp4hsvqvuvkvzu",
-  "termsOfUseUrl": "https://btcon.io/terms",
-  "privacyPolicyUrl": "https://btcon.io/privacy"
-}
+      "url": "https://your-dapp-url.com",
+      "name": "BTCon Swap Demo",
+      "iconUrl": "https://azure-tired-puma-835.mypinata.cloud/ipfs/bafkreidv2l2hehhlkjaev7tj36gmhysrbympyrwsco3snp4hsvqvuvkvzu",
+      "termsOfUseUrl": "https://your-dapp-url.com/terms-of-use.txt",
+      "privacyPolicyUrl": "https://your-dapp-url.com/privacy-policy.txt"
+    }
