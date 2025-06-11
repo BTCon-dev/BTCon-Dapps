@@ -4,9 +4,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const btcoAmountInput = document.getElementById('btco-amount');
         const tonAmountInput = document.getElementById('ton-amount');
         const walletStatusMsg = document.getElementById('wallet-status');
+        const rateDisplay = document.getElementById('rate-display');
 
         let isDarkMode = localStorage.getItem('darkMode') === 'true';
-        const EXAMPLE_RATE_BTCO_TO_TON = 0.1; // 1 BTCO = 0.1 TON
+        const EXAMPLE_RATE_BTCO_TO_TON = 33320; // Updated: 1 BTCO = 33320 TON
 
         // --- Theme Toggle ---
         function applyTheme() {
@@ -54,14 +55,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 let formattedTonAmount;
                 if (tonAmount === 0) {
                     formattedTonAmount = '0.0';
-                } else if (tonAmount < 0.0001) {
+                } else if (tonAmount < 0.0001 && tonAmount > 0) { // Avoid exponential for 0
                     formattedTonAmount = tonAmount.toExponential(2);
-                } else if (tonAmount < 1) {
+                } else if (tonAmount < 1 && tonAmount > 0) { // Avoid toFixed(6) for 0
                     formattedTonAmount = tonAmount.toFixed(6);
                 } else {
-                    formattedTonAmount = tonAmount.toFixed(4);
+                    formattedTonAmount = tonAmount.toLocaleString(undefined, {
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 4
+                    });
                 }
-                tonAmountInput.value = formattedTonAmount.replace(/\.?0+$/, "");
+                tonAmountInput.value = formattedTonAmount.replace(/\.?0+$/, ""); // Remove trailing zeros after decimal, if any
             } else {
                 tonAmountInput.value = '0.0';
             }
@@ -132,8 +136,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 updateSwapButtonState();
             }
         });
+        
+        function updateRateDisplay() {
+            if (rateDisplay) {
+                rateDisplay.textContent = `1 BTCO ≈ ${EXAMPLE_RATE_BTCO_TO_TON.toLocaleString()} TON`;
+            }
+        }
 
         // --- Initializations ---
         applyTheme(); // Apply saved theme on load
         updateSwapButtonState(); // Initial state for swap button
+        updateRateDisplay(); // Update the displayed rate
     });
